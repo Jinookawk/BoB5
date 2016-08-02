@@ -43,17 +43,23 @@ int main(){
 		&& (c != '}')
 		&& (c != '[')
 		&& (c != ']')
-		&& (c != ';')){
-			if(c == '\"') flag = DOUBLE_QUOTE;
-			else *cp++ = c;
+		&& (c != ';')
+		&& (c != '\"')){
+			*cp++ = c;
 		}
-		else{ // # < > WS ( ) , * [ ]
+		else{ // # < > WS ( ) , * [ ] "
 			char **datatype = data_type;
             char **reserved = reserved_word;
-            if((c == ',' || c == ' ') && flag == DOUBLE_QUOTE){
-                *cp++ = c;
-                continue;
-            }
+			if(c == '\"' && flag != DOUBLE_QUOTE){
+				flag = DOUBLE_QUOTE;
+				continue;
+			}
+			if(flag == DOUBLE_QUOTE){
+				if(c != '\"'){
+					*cp++ = c;
+					continue;
+				}
+			}
 			*cp = '\0';
 			while(comp_str(buf, *datatype)){
 				if(!comp_str(*datatype, "EOD")) break;
